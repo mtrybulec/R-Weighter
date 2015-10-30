@@ -32,7 +32,7 @@ calculate.weight.fit.for.target.distribution <- function(data.frame, target.dist
     # Sum weights from data.frame using split groups:
     data.sums <- sapply(data.groups, function(data.group) colSums(data.group["weight"]))
     
-    sum((data.sums - target.distribution["weight"])^2)
+    sum(abs(data.sums - target.distribution["weight"]))
 }
 
 weight.data.by.target.distributions <- function(data.frame, target.distributions) 
@@ -84,7 +84,7 @@ example <- function()
 {
     df <- data.frame(sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1), weight = c(1, 1, 1, 1))
 
-    cat("Data frame:\n")
+    cat("Original data frame:\n")
     print(df)
     
     td1 <- data.frame(sex = c(1, 2), weight = c(3.0, 4.0))
@@ -96,5 +96,8 @@ example <- function()
     print(td2)
     
     cat("\nWeighting:\n")
-    weight.data(df, list(td1, td2), epsilon=0.001)
+    df <- weight.data(df, list(td1, td2), epsilon = 0.0001, max.steps = 100)
+    
+    cat("Final data frame:\n")
+    df
 }
