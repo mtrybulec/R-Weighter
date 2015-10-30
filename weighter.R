@@ -59,15 +59,13 @@ calculate.weight.fit.for.target.distributions <- function(data.frame, target.dis
 
 weight.data <- function(data.frame, target.distributions, epsilon = 0.01, max.steps = 10)
 {
-    print(data.frame)
-    cat("\n")
     fit <- calculate.weight.fit.for.target.distributions(data.frame, target.distributions)
     step <- 0
     
     while(fit > epsilon)
     {
         step <- step + 1
-        cat("Weighting: step ", step, ", fit: ", fit, "\n", sep = "")
+        cat("  - step ", step, ", fit: ", fit, "\n", sep = "")
         
         data.frame <- weight.data.by.target.distributions(data.frame, target.distributions)
         fit <- calculate.weight.fit.for.target.distributions(data.frame, target.distributions)
@@ -85,9 +83,18 @@ weight.data <- function(data.frame, target.distributions, epsilon = 0.01, max.st
 example <- function()
 {
     df <- data.frame(sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1), weight = c(1, 1, 1, 1))
+
+    cat("Data frame:\n")
+    print(df)
     
     td1 <- data.frame(sex = c(1, 2), weight = c(3.0, 4.0))
     td2 <- data.frame(age = c(3, 2, 1), weight = c(2.5, 1.5, 3.0))
     
+    cat("\nTarget distribution 1:\n")
+    print(td1)
+    cat("\nTarget distribution 2:\n")
+    print(td2)
+    
+    cat("\nWeighting:\n")
     weight.data(df, list(td1, td2), epsilon=0.001)
 }
