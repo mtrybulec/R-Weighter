@@ -84,6 +84,8 @@ weight.data <- function(data.frame,
                         epsilon = 0.01, 
                         max.steps = 10)
 {
+    target.distribution.weight.names <- rep(target.distribution.weight.names, length.out = length(target.distributions))
+    
     fit <- calculate.weight.fit.for.target.distributions(
         data.frame, 
         target.distributions, 
@@ -126,7 +128,7 @@ example <- function()
     
     td1 <- data.frame(sex = c(1, 2), weight1 = c(3.0, 4.0))
     td2 <- data.frame(age = c(3, 2, 1), weight2 = c(2.5, 1.5, 3.0))
-    
+
     cat("\nTarget distribution 1:\n")
     print(td1)
     cat("\nTarget distribution 2:\n")
