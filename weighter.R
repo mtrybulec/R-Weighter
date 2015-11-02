@@ -1,4 +1,4 @@
-weight.data.by.target.distribution <- function(data.frame, target.distribution) 
+weight.data.by.target.distribution <- function(data.frame, target.distribution, data.frame.weight.name = "weight") 
 {
     # Split the data.frame using target.distribution variables.
     # Assumes the 'weight' variable is the last variable in target.distribution. 
@@ -6,14 +6,14 @@ weight.data.by.target.distribution <- function(data.frame, target.distribution)
     data.groups <- split(data.frame, data.frame[target.vars])
 
     # Sum weights from data.frame using split groups:
-    data.sums <- sapply(data.groups, function(data.group) colSums(data.group["weight"]))
+    data.sums <- sapply(data.groups, function(data.group) colSums(data.group[data.frame.weight.name]))
 
     # Re-weight:
     reweight.factors <- target.distribution["weight"] / data.sums
     reweighted.groups <- mapply(
         function(data.group, reweight.factor) 
         {
-            data.group["weight"] <- data.group["weight"] * reweight.factor
+            data.group[data.frame.weight.name] <- data.group[data.frame.weight.name] * reweight.factor
             data.group
         }, 
         data.groups, unlist(reweight.factors), SIMPLIFY = FALSE, USE.NAMES = FALSE)
@@ -22,7 +22,7 @@ weight.data.by.target.distribution <- function(data.frame, target.distribution)
     do.call("rbind", reweighted.groups)
 }
 
-calculate.weight.fit.for.target.distribution <- function(data.frame, target.distribution)
+calculate.weight.fit.for.target.distribution <- function(data.frame, target.distribution, data.frame.weight.name = "weight")
 {
     # Split the data.frame using target.distribution variables.
     # Assumes the 'weight' variable is the last variable in target.distribution. 
@@ -30,36 +30,36 @@ calculate.weight.fit.for.target.distribution <- function(data.frame, target.dist
     data.groups <- split(data.frame, data.frame[target.vars])
     
     # Sum weights from data.frame using split groups:
-    data.sums <- sapply(data.groups, function(data.group) colSums(data.group["weight"]))
+    data.sums <- sapply(data.groups, function(data.group) colSums(data.group[data.frame.weight.name]))
     
     sum(abs(data.sums - target.distribution["weight"]))
 }
 
-weight.data.by.target.distributions <- function(data.frame, target.distributions) 
+weight.data.by.target.distributions <- function(data.frame, target.distributions, data.frame.weight.name = "weight") 
 {
     for(index in 1:length(target.distributions))
     {
-        data.frame <- weight.data.by.target.distribution(data.frame, target.distributions[[index]])
+        data.frame <- weight.data.by.target.distribution(data.frame, target.distributions[[index]], data.frame.weight.name)
     }
     
     data.frame
 }
 
-calculate.weight.fit.for.target.distributions <- function(data.frame, target.distributions) 
+calculate.weight.fit.for.target.distributions <- function(data.frame, target.distributions, data.frame.weight.name = "weight") 
 {
     fit <- 0
     
     for(index in 1:length(target.distributions))
     {
-        fit <- fit + calculate.weight.fit.for.target.distribution(data.frame, target.distributions[[index]])
+        fit <- fit + calculate.weight.fit.for.target.distribution(data.frame, target.distributions[[index]], data.frame.weight.name)
     }
     
     fit
 }
 
-weight.data <- function(data.frame, target.distributions, epsilon = 0.01, max.steps = 10)
+weight.data <- function(data.frame, target.distributions, data.frame.weight.name = "weight", epsilon = 0.01, max.steps = 10)
 {
-    fit <- calculate.weight.fit.for.target.distributions(data.frame, target.distributions)
+    fit <- calculate.weight.fit.for.target.distributions(data.frame, target.distributions, data.frame.weight.name)
     step <- 0
     
     while(fit > epsilon)
@@ -67,8 +67,8 @@ weight.data <- function(data.frame, target.distributions, epsilon = 0.01, max.st
         step <- step + 1
         cat("  - step ", step, ", fit: ", fit, "\n", sep = "")
         
-        data.frame <- weight.data.by.target.distributions(data.frame, target.distributions)
-        fit <- calculate.weight.fit.for.target.distributions(data.frame, target.distributions)
+        data.frame <- weight.data.by.target.distributions(data.frame, target.distributions, data.frame.weight.name)
+        fit <- calculate.weight.fit.for.target.distributions(data.frame, target.distributions, data.frame.weight.name)
         
         if(step >= max.steps)
         {
@@ -82,7 +82,7 @@ weight.data <- function(data.frame, target.distributions, epsilon = 0.01, max.st
     
 example <- function()
 {
-    df <- data.frame(sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1), weight = c(1, 1, 1, 1))
+    df <- data.frame(sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1), df.weight = c(1, 1, 1, 1))
 
     cat("Original data frame:\n")
     print(df)
@@ -96,7 +96,7 @@ example <- function()
     print(td2)
     
     cat("\nWeighting:\n")
-    df <- weight.data(df, list(td1, td2), epsilon = 0.0001, max.steps = 100)
+    df <- weight.data(df, list(td1, td2), data.frame.weight.name = "df.weight", epsilon = 0.0001, max.steps = 100)
     
     cat("Final data frame:\n")
     df
