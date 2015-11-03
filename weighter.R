@@ -16,7 +16,7 @@ weight.data.by.target.distribution <- function(data.frame,
 
     # Split the data.frame using target.distribution variables.
     # Assumes the 'weight' variable is the last variable in target.distribution. 
-    target.vars <- names(target.distribution)[1:length(target.distribution) - 1]
+    target.vars <- names(target.distribution)[names(target.distribution) != target.distribution.weight.name]
     merged.data <- merge(data.frame, target.distribution, by = target.vars)
     data.groups <- split(merged.data, merged.data[target.vars])
 
@@ -59,7 +59,7 @@ calculate.weight.fit.for.target.distribution <- function(data.frame,
     
     # Split the data.frame using target.distribution variables.
     # Assumes the 'weight' variable is the last variable in target.distribution. 
-    target.vars <- names(target.distribution)[1:length(target.distribution) - 1]
+    target.vars <- names(target.distribution)[names(target.distribution) != target.distribution.weight.name]
     merged.data <- merge(data.frame, target.distribution, by = target.vars)
     data.groups <- split(merged.data, merged.data[target.vars])
     
@@ -156,13 +156,13 @@ weight.data <- function(data.frame,
     
 example <- function()
 {
-    df <- data.frame(sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1), weight = c(1, 1, 1, 1))
+    df <- data.frame(weight = c(1, 1, 1, 1), sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1))
 
     cat("Original data frame:\n")
     print(df)
     
     td1 <- data.frame(sex = c(1, 2), weight1 = c(3.0, 4.0))
-    td2 <- data.frame(age = c(3, 2, 1), weight2 = c(2.5, 1.5, 3.0))
+    td2 <- data.frame(weight2 = c(2.5, 1.5, 3.0), age = c(3, 2, 1))
 
     cat("\nTarget distribution 1:\n")
     print(td1)
