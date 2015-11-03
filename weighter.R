@@ -18,7 +18,7 @@ weight.data.by.target.distribution <- function(data.frame,
     # Assumes the 'weight' variable is the last variable in target.distribution. 
     target.vars <- names(target.distribution)[names(target.distribution) != target.distribution.weight.name]
     merged.data <- merge(data.frame, target.distribution, by = target.vars)
-    data.groups <- split(merged.data, merged.data[target.vars])
+    data.groups <- split(merged.data, merged.data[target.vars], drop = TRUE)
 
     # Sum weights from data.frame using split groups; calculate the reweight factor and apply it:
     reweighted.groups <- lapply(
@@ -61,8 +61,8 @@ calculate.weight.fit.for.target.distribution <- function(data.frame,
     # Assumes the 'weight' variable is the last variable in target.distribution. 
     target.vars <- names(target.distribution)[names(target.distribution) != target.distribution.weight.name]
     merged.data <- merge(data.frame, target.distribution, by = target.vars)
-    data.groups <- split(merged.data, merged.data[target.vars])
-    
+    data.groups <- split(merged.data, merged.data[target.vars], drop = TRUE)
+
     # Sum weights from data.frame using split groups; 
     # subtract the target weight from the sum:
     data.sums <- sapply(
@@ -154,16 +154,16 @@ weight.data <- function(data.frame,
     data.frame[original.data.frame.names]
 }    
     
-example <- function()
+example1 <- function()
 {
-    df <- data.frame(weight = c(1, 1, 1, 1), sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1))
+    df <- data.frame(sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1), weight = c(1, 1, 1, 1))
 
     cat("Original data frame:\n")
     print(df)
     
     td1 <- data.frame(sex = c(1, 2), weight1 = c(3.0, 4.0))
     td2 <- data.frame(weight2 = c(2.5, 1.5, 3.0), age = c(3, 2, 1))
-
+    
     cat("\nTarget distribution 1:\n")
     print(td1)
     cat("\nTarget distribution 2:\n")
@@ -175,6 +175,29 @@ example <- function()
         list(td1, td2), 
         data.frame.weight.name = "weight", 
         target.distribution.weight.names = c("weight1", "weight2"),
+        epsilon = 0.000001, 
+        max.steps = 100)
+    
+    cat("Final data frame:\n")
+    df
+}
+
+example2 <- function()
+{
+    df <- data.frame(sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1), weight = c(1, 1, 1, 1))
+    
+    cat("Original data frame:\n")
+    print(df)
+    
+    td <- data.frame(sex = c(1, 2, 1, 2), age = c(1, 1, 2, 3), weight = c(1.5, 1.5, 1.5, 2.5))
+
+    cat("\nTarget distribution:\n")
+    print(td)
+
+    cat("\nWeighting:\n")
+    df <- weight.data(
+        df, 
+        list(td), 
         epsilon = 0.000001, 
         max.steps = 100)
     
