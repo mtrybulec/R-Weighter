@@ -119,6 +119,7 @@ weight.data <- function(data.frame,
                         max.steps = 10)
 {
     target.distribution.weight.names <- rep(target.distribution.weight.names, length.out = length(target.distributions))
+    original.data.frame.names = names(data.frame)
     
     fit <- calculate.weight.fit.for.target.distributions(
         data.frame, 
@@ -150,7 +151,7 @@ weight.data <- function(data.frame,
     }
     
     cat("Final fit: ", fit, "\n\n", sep = "")
-    data.frame
+    data.frame[original.data.frame.names]
 }    
     
 example <- function()
