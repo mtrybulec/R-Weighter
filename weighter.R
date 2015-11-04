@@ -111,6 +111,42 @@ calculate.weight.fit.for.target.distributions <- function(data.frame,
     fit
 }
 
+check.variable.names <- function(data.frame, 
+                                 target.distributions, 
+                                 data.frame.weight.name = "weight",
+                                 target.distribution.weight.names = "weight")
+{
+    # Check that the data frame weight variable exists:
+    if(!(data.frame.weight.name %in% names(data.frame)))
+    {
+        stop(paste("Weight variable missing in data frame:", data.frame.weight.name))
+    }
+    
+    # Check that the numbers of target distributions and weights are the same:
+    if(length(target.distributions) != length(target.distribution.weight.names))
+    {
+        stop(paste(
+            "Number of target distributions differs from number of weights:", 
+            length(target.distributions), 
+            "and", 
+            length(target.distribution.weight.names)))
+    }
+    
+    # Check that target distribution weight variables exist:
+    for(index in 1:length(target.distributions))
+    {
+        if(!(target.distribution.weight.names[index] %in% names(target.distributions[[index]])))
+        {
+            stop(paste(
+                "Weight variable missing in target distribution ", 
+                index, 
+                ": ", 
+                target.distribution.weight.names[index],
+                sep = ""))
+        }
+    }
+}    
+
 weight.data <- function(data.frame, 
                         target.distributions, 
                         data.frame.weight.name = "weight",
@@ -119,6 +155,13 @@ weight.data <- function(data.frame,
                         max.steps = 10)
 {
     target.distribution.weight.names <- rep(target.distribution.weight.names, length.out = length(target.distributions))
+    
+    check.variable.names(
+        data.frame, 
+        target.distributions, 
+        data.frame.weight.name, 
+        target.distribution.weight.names)
+    
     original.data.frame.names = names(data.frame)
     
     fit <- calculate.weight.fit.for.target.distributions(
