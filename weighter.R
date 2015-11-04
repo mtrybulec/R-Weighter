@@ -122,6 +122,8 @@ check.variable.names <- function(data.frame,
         stop(paste("Weight variable missing in data frame:", data.frame.weight.name))
     }
     
+    data.frame.names.sans.weight <- names(data.frame)[names(data.frame) != data.frame.weight.name]
+    
     # Check that the numbers of target distributions and weights are the same:
     if(length(target.distributions) != length(target.distribution.weight.names))
     {
@@ -143,6 +145,21 @@ check.variable.names <- function(data.frame,
                 ": ", 
                 target.distribution.weight.names[index],
                 sep = ""))
+        }
+        
+        target.distributions.names.sans.weight <- 
+            names(target.distributions[[index]])[names(target.distributions[[index]]) != target.distribution.weight.names[index]]
+        
+        unknown.target.distributions.names <- setdiff(target.distributions.names.sans.weight, data.frame.names.sans.weight)
+        
+        if(length(unknown.target.distributions.names) > 0)
+        {
+            stop(paste(c(
+                "Target distribution", 
+                index, 
+                "variables missing from data frame:", 
+                unknown.target.distributions.names),
+                collapse = " "))
         }
     }
 }    
