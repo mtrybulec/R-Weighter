@@ -1,7 +1,10 @@
+default.weight.name <- "weight"
+default.weight.suffixes <- c(".x", ".y") # defaults from merge()
+
 weight.data.by.target.distribution <- function(data.frame, 
                                                target.distribution, 
-                                               data.frame.weight.name = "weight",
-                                               target.distribution.weight.name = "weight") 
+                                               data.frame.weight.name = default.weight.name,
+                                               target.distribution.weight.name = default.weight.name) 
 {
     # Handle the case when weight variable names are the same in the data frame and the target distribution
     # (after mering of the two, if the variable names are the same, they'll be renamed with standard suffixes of '.x' and '.y').
@@ -10,8 +13,8 @@ weight.data.by.target.distribution <- function(data.frame,
     
     if(data.frame.weight.name == target.distribution.weight.name) 
     {
-        merged.data.frame.weight.name <- paste(merged.data.frame.weight.name, ".x", sep = "")    
-        merged.target.distribution.weight.name <- paste(merged.target.distribution.weight.name, ".y", sep = "")    
+        merged.data.frame.weight.name <- paste(merged.data.frame.weight.name, default.weight.suffixes[1], sep = "")    
+        merged.target.distribution.weight.name <- paste(merged.target.distribution.weight.name, default.weight.suffixes[2], sep = "")    
     }
 
     # Split the data.frame using target.distribution variables.
@@ -43,8 +46,8 @@ weight.data.by.target.distribution <- function(data.frame,
 
 calculate.weight.fit.for.target.distribution <- function(data.frame, 
                                                          target.distribution, 
-                                                         data.frame.weight.name = "weight",
-                                                         target.distribution.weight.name = "weight")
+                                                         data.frame.weight.name = default.weight.name,
+                                                         target.distribution.weight.name = default.weight.name)
 {
     # Handle the case when weight variable names are the same in the data frame and the target distribution
     # (after mering of the two, if the variable names are the same, they'll be renamed with standard suffixes of '.x' and '.y').
@@ -53,8 +56,8 @@ calculate.weight.fit.for.target.distribution <- function(data.frame,
     
     if(data.frame.weight.name == target.distribution.weight.name) 
     {
-        merged.data.frame.weight.name <- paste(merged.data.frame.weight.name, ".x", sep = "")    
-        merged.target.distribution.weight.name <- paste(merged.target.distribution.weight.name, ".y", sep = "")    
+        merged.data.frame.weight.name <- paste(merged.data.frame.weight.name, default.weight.suffixes[1], sep = "")    
+        merged.target.distribution.weight.name <- paste(merged.target.distribution.weight.name, default.weight.suffixes[2], sep = "")    
     }
     
     # Split the data.frame using target.distribution variables.
@@ -77,8 +80,8 @@ calculate.weight.fit.for.target.distribution <- function(data.frame,
 
 weight.data.by.target.distributions <- function(data.frame, 
                                                 target.distributions, 
-                                                data.frame.weight.name = "weight",
-                                                target.distribution.weight.names = "weight") 
+                                                data.frame.weight.name = default.weight.name,
+                                                target.distribution.weight.names = default.weight.name) 
 {
     for(index in 1:length(target.distributions))
     {
@@ -94,8 +97,8 @@ weight.data.by.target.distributions <- function(data.frame,
 
 calculate.weight.fit.for.target.distributions <- function(data.frame, 
                                                           target.distributions, 
-                                                          data.frame.weight.name = "weight",
-                                                          target.distribution.weight.names = "weight") 
+                                                          data.frame.weight.name = default.weight.name,
+                                                          target.distribution.weight.names = default.weight.name) 
 {
     fit <- 0
     
@@ -113,8 +116,8 @@ calculate.weight.fit.for.target.distributions <- function(data.frame,
 
 check.variable.names <- function(data.frame, 
                                  target.distributions, 
-                                 data.frame.weight.name = "weight",
-                                 target.distribution.weight.names = "weight")
+                                 data.frame.weight.name = default.weight.name,
+                                 target.distribution.weight.names = default.weight.name)
 {
     # Check that the data frame weight variable exists:
     if(!(data.frame.weight.name %in% names(data.frame)))
@@ -166,8 +169,8 @@ check.variable.names <- function(data.frame,
 
 weight.data <- function(data.frame, 
                         target.distributions, 
-                        data.frame.weight.name = "weight",
-                        target.distribution.weight.names = "weight",
+                        data.frame.weight.name = default.weight.name,
+                        target.distribution.weight.names = default.weight.name,
                         epsilon = 0.01, 
                         max.steps = 10)
 {
