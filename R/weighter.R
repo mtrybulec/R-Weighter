@@ -167,6 +167,22 @@ check.variable.names <- function(data.frame,
     }
 }
 
+#' Re-weight the data to fit a list of target distributions.
+#'
+#' \code{weight.data} iteratively re-weights the data to find the best fit
+#'     to a list of target distributions.
+#'
+#' @param data.frame (data.frame) the data.frame with source data.
+#' @param target.distributions (list of data.frame) one more target distributions
+#'     that the re-weighted data should approximate.
+#' @param data.frame.weight.name (character) the name of the weight variable
+#'     in the source \code{data.frame}.
+#' @param target.distribution.weight.names (character) the names of weight variables
+#'     in the \code{target.distributions} data frames.
+#' @param epsilon (numeric) the target precision of the approximation.
+#' @param max.steps (numeric) the maximum number of times the algorithm will
+#'     re-weight the data to find the best fit.
+#'
 #' @export
 weight.data <- function(data.frame,
                         target.distributions,
@@ -218,8 +234,10 @@ weight.data <- function(data.frame,
     data.frame[original.data.frame.names]
 }
 
+#' Near-perfect fit, to two target distributions, found in a series of steps.
+#'
 #' @export
-example1 <- function()
+runExample1 <- function()
 {
     df <- data.frame(sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1), weight = c(1, 1, 1, 1))
 
@@ -247,8 +265,10 @@ example1 <- function()
     df
 }
 
+#' Perfect fit found in a single step.
+#'
 #' @export
-example2 <- function()
+runExample2 <- function()
 {
     df <- data.frame(sex = c(1, 1, 2, 2), age = c(1, 2, 3, 1), weight = c(1, 1, 1, 1))
 
